@@ -1,31 +1,38 @@
 {
-	"expo": {
-		"name": "Dota Counters",
-		"slug": "dota-counters",
-		"version": "1.0.1",
-		"orientation": "portrait",
-		"icon": "./assets/icon.png",
-		"userInterfaceStyle": "light",
-		"splash": {
-			"backgroundColor": "#1C242D"
-		},
-		"ios": {
-			"supportsTablet": true
-		},
-		"android": {
-			"adaptiveIcon": {
-				"foregroundImage": "./assets/icon.png",
-				"backgroundColor": "#1C242D"
-			},
-			"package": "com.evilwhy.dotacounters"
-		},
-		"web": {
-			"favicon": "./assets/favicon.png"
-		},
-		"extra": {
-			"eas": {
-				"projectId": "1f5f6760-4085-4b27-b49e-9411a4a82b73"
-			}
-		}
-	}
+  "expo": {
+    "name": "Dota Counters",
+    "slug": "dota-counters",
+    "version": "1.0.2",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "dark",
+    "backgroundColor": "#1C242D",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#1C242D"
+    },
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/icon.png",
+        "backgroundColor": "#1C242D"
+      },
+      "package": "com.evilwhy.dotacounters"
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "1f5f6760-4085-4b27-b49e-9411a4a82b73"
+      }
+    },
+    "plugins": [
+      "expo-router"
+    ],
+    "scheme": "dota-counters-scheme"
+  }
 }

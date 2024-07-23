@@ -1,3 +1,3 @@
-import CounterHeroes from "./components/CounterHeroes";
+import CounterHeroes from './components/CounterHeroes';
 
 export { CounterHeroes };

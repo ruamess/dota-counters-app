@@ -1,3 +1,3 @@
-import SearchHeroes from "./components/SearchHeroes";
+import SearchHeroes from './components/SearchHeroes';
 
 export { SearchHeroes };

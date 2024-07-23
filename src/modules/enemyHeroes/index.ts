@@ -1,3 +1,3 @@
-import EnemyHeroes from "./components/EnemyHeroes";
+import EnemyHeroes from './components/EnemyHeroes';
 
 export { EnemyHeroes };
