@@ -1,57 +1,61 @@
-import Ionicons from "@expo/vector-icons/Ionicons";
-import React from "react";
-import { View, StyleSheet, TextInput } from "react-native";
-import Animated, { FadeIn } from "react-native-reanimated";
-import { moderateScale, scale, verticalScale } from "react-native-size-matters";
+import Ionicons from '@expo/vector-icons/Ionicons';
+import React, { memo } from 'react';
+import { View, StyleSheet, TextInput } from 'react-native';
+import { ms, s, vs } from 'react-native-size-matters';
+import colors from 'shared/colors';
 
 const SearchInput = ({ ...children }) => {
+  console.log('search rendered');
   return (
-    <Animated.View style={styles.inputContainer} entering={FadeIn.duration(300)}>
+    <View style={styles.inputContainer}>
       <View style={styles.search}>
-        <TextInput style={styles.input} placeholder="Search..." placeholderTextColor="white" {...children} />
-
+        <TextInput
+          style={styles.input}
+          placeholder="Search..."
+          placeholderTextColor={colors.white}
+          {...children}
+        />
         <View style={styles.icon}>
-          <Ionicons name="search" size={verticalScale(20)} color="white" />
+          <Ionicons name="search" size={vs(20)} color={colors.white} />
         </View>
       </View>
-    </Animated.View>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   inputContainer: {
-    width: "100%",
-    alignItems: "center",
-    justifyContent: "center",
-    height: verticalScale(45),
+    width: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
+    height: vs(50),
     zIndex: 3,
   },
   input: {
-    height: verticalScale(40),
-    fontSize: moderateScale(16),
+    height: vs(40),
+    fontSize: ms(16),
     flex: 1,
-    color: "white",
+    color: colors.white,
   },
   search: {
-    width: "100%",
-    maxWidth: scale(400),
-    backgroundColor: "#2E3740",
-    height: verticalScale(40),
-    borderRadius: moderateScale(10),
-    paddingLeft: moderateScale(15),
-    display: "flex",
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
+    width: '100%',
+    maxWidth: s(400),
+    backgroundColor: colors.dark2,
+    height: vs(40),
+    borderRadius: ms(10),
+    paddingHorizontal: ms(15),
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
     zIndex: 20,
   },
   icon: {
-    height: verticalScale(40),
-    width: scale(38),
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
+    height: '100%',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
 
-export default SearchInput;
+export default memo(SearchInput);

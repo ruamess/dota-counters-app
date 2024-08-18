@@ -1,9 +1,9 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import { moderateScale, ms, verticalScale, vs } from 'react-native-size-matters';
+import { ms, vs } from 'react-native-size-matters';
 import { ISelectedHeroes } from 'shared/utils/interfaces';
-
 import EnemyHeroCard from './EnemyHeroCard';
+import colors from 'shared/colors';
 
 const EnemyHeroes: React.FC<ISelectedHeroes> = ({ selectedHeroes }) => {
   return (
@@ -31,9 +31,9 @@ const styles = StyleSheet.create({
     paddingTop: ms(10),
   },
   title: {
-    fontSize: moderateScale(17),
+    fontSize: ms(17),
     fontWeight: 'bold',
-    color: 'white',
+    color: colors.white,
   },
   enemyHeroesList: {
     display: 'flex',

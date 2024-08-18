@@ -1,13 +1,14 @@
+import React, { FC } from 'react';
 import HeroImage from 'components/HeroImage';
-import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import { moderateScale, scale, verticalScale } from 'react-native-size-matters';
+import { ms, vs } from 'react-native-size-matters';
+import colors from 'shared/colors';
 import { IHero } from 'shared/utils/interfaces';
 
-const EnemyHeroCard: React.FC<IHero> = ({ image, localized_name }) => {
+const EnemyHeroCard: FC<IHero> = ({ image, localized_name }) => {
   return (
     <View style={styles.enemyHeroCard}>
-      <HeroImage source={{ uri: image }} />
+      <HeroImage url={image} size="lg" />
       <Text style={styles.heroName}>{localized_name}</Text>
     </View>
   );
@@ -20,14 +21,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   heroName: {
-    fontSize: moderateScale(15),
-    color: 'white',
-    marginTop: verticalScale(3),
-  },
-  image: {
-    width: scale(90),
-    height: verticalScale(50),
-    borderRadius: moderateScale(10),
+    fontSize: ms(15),
+    color: colors.white,
+    marginTop: vs(3),
   },
 });
 

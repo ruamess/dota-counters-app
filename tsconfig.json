@@ -7,15 +7,12 @@
       "components/*": [
         "src/components/*"
       ],
-      "shared/*": [
-        "src/shared/*"
-      ],
       "modules/*": [
         "src/modules/*"
       ],
-      "hooks/*": [
-        "src/hooks/*"
-      ]
+      "shared/*": [
+        "src/shared/*"
+      ],
     }
   }
 }

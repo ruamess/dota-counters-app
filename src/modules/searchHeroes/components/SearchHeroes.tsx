@@ -1,71 +1,86 @@
 import { observer } from 'mobx-react-lite';
-import React, { useRef } from 'react';
-import { View, StyleSheet } from 'react-native';
-import Animated, { FadeIn, FadeOut } from 'react-native-reanimated';
-import { moderateScale, s, scale, verticalScale, vs } from 'react-native-size-matters';
+import React, { useRef, memo, useCallback } from 'react';
+import { StyleSheet, NativeSyntheticEvent, NativeScrollEvent, Text } from 'react-native';
+import { FlashList } from '@shopify/flash-list';
+import { ms, vs } from 'react-native-size-matters';
 import { ISearchHeroes } from 'shared/utils/interfaces';
 import { scrollVibration } from 'shared/utils/vibration';
-
-import AllHeroes from './AllHeroes';
+import colors from 'shared/colors';
+import SearchHeroCard from './SearchHeroCard';
 import SelectedHeroes from './SelectedHeroes';
+import Animated, { FadeIn, FadeOut } from 'react-native-reanimated';
+import { HomeStore } from 'shared/store/home';
+import NoHeroes from './NoHeroes';
 
-const CARD_HEIGHT = moderateScale(60);
+const CARD_HEIGHT = ms(60);
 
 const SearchHeroes: React.FC<ISearchHeroes> = observer(({ filteredHeroes, selectedHeroes }) => {
   const scrollOffsetY = useRef(0);
   const lastVibrationOffset = useRef(0);
+  const scrollEvent = useCallback(
+    (event: NativeSyntheticEvent<NativeScrollEvent>) => {
+      const currentOffsetY = event.nativeEvent.contentOffset.y;
 
-  const scrollEvent = (event: any) => {
-    const currentOffsetY = event.nativeEvent.contentOffset.y;
+      scrollVibration(lastVibrationOffset, scrollOffsetY, currentOffsetY, CARD_HEIGHT);
+    },
+    [lastVibrationOffset, scrollOffsetY],
+  );
 
-    scrollVibration(lastVibrationOffset, scrollOffsetY, currentOffsetY, CARD_HEIGHT);
-  };
+  console.log('search heroes rendered');
 
   return (
     <Animated.View
-      style={styles.scroll}
-      entering={FadeIn.duration(100)}
-      exiting={FadeOut.duration(100)}
+      entering={FadeIn.duration(200)}
+      exiting={FadeOut.duration(200)}
+      style={styles.container}
     >
-      <Animated.ScrollView
-        keyboardShouldPersistTaps="handled"
-        contentContainerStyle={styles.scrollContent}
-        onScroll={scrollEvent}
-        scrollEventThrottle={16}
-      >
-        <View style={{ gap: moderateScale(10) }}>
-          {selectedHeroes.length > 0 && <SelectedHeroes selectedHeroes={selectedHeroes} />}
-          <AllHeroes filteredHeroes={filteredHeroes} />
-        </View>
-      </Animated.ScrollView>
+      {filteredHeroes.length > 0 ? (
+        <FlashList
+          ListHeaderComponent={
+            selectedHeroes.length > 0 && HomeStore.searchQuery.length == 0 ? (
+              <SelectedHeroes selectedHeroes={selectedHeroes} />
+            ) : (
+              <Text style={styles.title}>All heroes</Text>
+            )
+          }
+          keyboardShouldPersistTaps="handled"
+          onScroll={scrollEvent}
+          showsVerticalScrollIndicator={false}
+          data={filteredHeroes}
+          estimatedItemSize={ms(60)}
+          keyExtractor={(item) => item.id.toString()}
+          renderItem={({ item }) => (
+            <SearchHeroCard
+              id={item.id}
+              name={item.name}
+              selected={item.selected}
+              localized_name={item.localized_name}
+              image={item.image}
+            />
+          )}
+        />
+      ) : (
+        <NoHeroes />
+      )}
     </Animated.View>
   );
 });
 
 const styles = StyleSheet.create({
-  scroll: {
-    marginTop: verticalScale(55),
+  container: {
+    paddingHorizontal: 15,
+    marginTop: vs(50),
     position: 'absolute',
     top: 0,
     left: 0,
     right: 0,
     bottom: 0,
-    zIndex: 2,
-    backgroundColor: '#1C242D',
+    zIndex: 1,
+    backgroundColor: colors.dark1,
   },
-  scrollContent: {
-    paddingHorizontal: scale(15),
-    paddingBottom: vs(12),
-    alignItems: 'center',
-  },
-  selectedScrollContent: {
-    paddingHorizontal: scale(15),
-    alignItems: 'center',
-  },
-  selectedHeroText: {
-    marginHorizontal: scale(10),
-    color: 'white',
+  title: {
+    color: colors.white,
   },
 });
 
-export default SearchHeroes;
+export default memo(SearchHeroes);

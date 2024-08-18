@@ -1,50 +1,51 @@
 import { observer } from 'mobx-react-lite';
-import React, { useRef } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
-import Animated from 'react-native-reanimated';
-import { moderateScale, verticalScale } from 'react-native-size-matters';
+import React, { useCallback, useRef } from 'react';
+import { View, Text, StyleSheet, NativeSyntheticEvent, NativeScrollEvent } from 'react-native';
+import { ms, vs } from 'react-native-size-matters';
 import { ICounterHeroes } from 'shared/utils/interfaces';
 import { scrollVibration } from 'shared/utils/vibration';
-
 import CounterHeroCard from './CounterHeroCard';
+import colors from 'shared/colors';
+import { FlashList } from '@shopify/flash-list';
 
-const CARD_HEIGHT = moderateScale(94);
+const CARD_HEIGHT = ms(94);
 
 const CounterHeroes: React.FC<ICounterHeroes> = observer(({ counterHeroes }) => {
   const sortedCounterHeroes = counterHeroes
     .slice()
-    .sort((a, b) => b.overallWinrate - a.overallWinrate);
+    .sort((a, b) => b.overallWinRate - a.overallWinRate);
   const scrollOffsetY = useRef(0);
   const lastVibrationOffset = useRef(0);
 
-  const scrollEvent = (event: any) => {
-    const currentOffsetY = event.nativeEvent.contentOffset.y;
+  const scrollEvent = useCallback(
+    (event: NativeSyntheticEvent<NativeScrollEvent>) => {
+      const currentOffsetY = event.nativeEvent.contentOffset.y;
 
-    scrollVibration(lastVibrationOffset, scrollOffsetY, currentOffsetY, CARD_HEIGHT);
-  };
+      scrollVibration(lastVibrationOffset, scrollOffsetY, currentOffsetY, CARD_HEIGHT);
+    },
+    [lastVibrationOffset, scrollOffsetY, CARD_HEIGHT],
+  );
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Counter heroes</Text>
+      <View style={styles.header}>
+        <Text style={styles.title}>Counter heroes</Text>
+      </View>
 
-      <Animated.ScrollView
+      <FlashList
         showsVerticalScrollIndicator={false}
         onScroll={scrollEvent}
-        scrollEventThrottle={16}
-      >
-        {sortedCounterHeroes.map((el) => (
+        data={sortedCounterHeroes}
+        estimatedItemSize={vs(94)}
+        renderItem={({ item }) => (
           <CounterHeroCard
-            key={el.id}
-            id={el.id}
-            name={el.name}
-            selected={el.selected}
-            localized_name={el.localized_name}
-            image={el.image}
-            overallWinrate={el.overallWinrate}
-            counterpicked={el.counterpicked}
+            localized_name={item.localized_name}
+            image={item.image}
+            overallWinRate={item.overallWinRate}
+            counterpicked={item.counterpicked}
           />
-        ))}
-      </Animated.ScrollView>
+        )}
+      />
     </View>
   );
 });
@@ -54,10 +55,15 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   title: {
-    fontSize: moderateScale(17),
+    fontSize: ms(17),
     fontWeight: 'bold',
-    marginBottom: verticalScale(10),
-    color: 'white',
+    color: colors.white,
+  },
+  header: {
+    justifyContent: 'space-between',
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: vs(5),
   },
 });
 

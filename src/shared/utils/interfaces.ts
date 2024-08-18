@@ -6,13 +6,20 @@ export interface IHero {
   selected: boolean;
 }
 
+export interface IHeroImage {
+  url: string;
+  size: 'lg' | 'md' | 'sm';
+}
+
 export interface ICounterHero extends IHero {
-  overallWinrate: number;
+  overallWinRate: number;
   counterpicked: ICounterpickedHero[];
 }
 
+// image, localized_name, overallWinRate;
+
 export interface ICounterpickedHero extends IHero {
-  winrate: number;
+  winRate: number;
 }
 
 export interface IFilteredHeroes {
@@ -30,4 +37,25 @@ export interface ICounterHeroes {
 export interface ISearchHeroes {
   filteredHeroes: IHero[];
   selectedHeroes: IHero[];
+}
+
+// localized_name, image, overallWinRate, counterpicked
+
+export interface ICounterHeroCard extends Omit<ICounterHero, 'id' | 'selected' | 'name'> {}
+
+export interface ICounterHeroInfo
+  extends Omit<ICounterHero, 'id' | 'selected' | 'counterpicked' | 'name'> {}
+
+export interface IVSEnemyWinRates {
+  counterpicked: ICounterpickedHero[];
+}
+
+export interface IVSEnemyWinRateCard {
+  image: string;
+  winRate: number;
+}
+
+export interface IAsyncStore {
+  heroes: [];
+  vibration: boolean;
 }

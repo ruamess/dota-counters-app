@@ -3,6 +3,7 @@ import { observer } from 'mobx-react-lite';
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { moderateScale } from 'react-native-size-matters';
+import colors from 'shared/colors';
 import { SettingsStore } from 'shared/store/settings';
 import { Vibrate } from 'shared/utils/vibration';
 
@@ -20,7 +21,7 @@ const Settings = observer(() => {
             value={SettingsStore.vibration}
           />
         </View>
-        {/* <Text>tg:@evilwhy</Text> */}
+        {/* <Text>i love dary</Text> */}
       </View>
     </View>
   );
@@ -42,7 +43,7 @@ const styles = StyleSheet.create({
     width: '80%',
   },
   title: {
-    color: 'white',
+    color: colors.white,
     fontSize: moderateScale(17),
   },
 });

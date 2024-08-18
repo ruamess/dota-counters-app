@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { HomeStore } from 'shared/store/home';
+import { setHeroesData } from 'shared/utils/asyncStorage';
 
 async function fetchHeroes() {
   try {
@@ -28,6 +29,7 @@ export default async function normalizeHeroesData() {
   );
 
   HomeStore.setHeroes(processedHeroes);
+  setHeroesData(processedHeroes);
 
   return true;
 }

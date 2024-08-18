@@ -4,30 +4,29 @@ import { IHero, ICounterHero, ICounterpickedHero } from 'shared/utils/interfaces
 class MainStore {
   heroes: Map<string, IHero> = new Map();
   counterHeroes: Map<string, ICounterHero> = new Map();
-
+  searchQuery: string = '';
   constructor() {
     makeAutoObservable(this);
   }
+
+  setSearchQuery = (newValue: string) => {
+    this.searchQuery = newValue;
+  };
 
   pushHero = action((hero: ICounterHero) => {
     this.counterHeroes.set(hero.localized_name, hero);
   });
 
   calculateAverageWinrate(counterpicked: ICounterpickedHero[]): number {
-    return counterpicked.reduce((sum, picked) => sum + picked.winrate, 0) / counterpicked.length;
+    return counterpicked.reduce((sum, picked) => sum + picked.winRate, 0) / counterpicked.length;
   }
 
   updateCounterHeroWinrate(hero: ICounterHero) {
-    hero.overallWinrate = this.calculateAverageWinrate(hero.counterpicked);
+    hero.overallWinRate = this.calculateAverageWinrate(hero.counterpicked);
   }
 
-  removeCounterpickedHero = action((existingHero: ICounterHero, pickedIndex: number) => {
-    existingHero.counterpicked.splice(pickedIndex, 1);
-    if (existingHero.counterpicked.length === 0) {
-      this.counterHeroes.delete(existingHero.localized_name);
-    } else {
-      this.updateCounterHeroWinrate(existingHero);
-    }
+  removeCounterpickedHero = action((existingHero: ICounterHero) => {
+    this.counterHeroes.delete(existingHero.localized_name);
   });
 
   addCounterpickedHero = action(
@@ -48,19 +47,12 @@ class MainStore {
 
   toggleHeroSelection = action((hero: IHero) => {
     const existingHero = this.findHeroByLocalizedName(hero.localized_name);
+
     if (existingHero) {
-      if (existingHero.selected) {
-        existingHero.selected = false;
-      } else if (this.selectedHeroes.length < 5) {
-        existingHero.selected = true;
-      } else {
-        console.log('Maximum number of selected heroes reached!');
-      }
+      existingHero.selected = !existingHero.selected && this.selectedHeroes.length < 5;
     } else if (this.selectedHeroes.length < 5) {
       hero.selected = true;
       this.heroes.set(hero.localized_name, hero);
-    } else if (this.selectedHeroes.length === 5) {
-      console.log('Maximum number of selected heroes reached!');
     } else {
       console.log('Maximum number of selected heroes reached!');
     }
@@ -68,12 +60,12 @@ class MainStore {
 
   clearSelectedHeroes = action(() => {
     this.selectedHeroes.forEach((hero) => {
-      this.counterHeroes.forEach((counterHero, key) => {
+      this.counterHeroes.forEach((counterHero) => {
         const pickedIndex = counterHero.counterpicked.findIndex(
           (picked) => picked.localized_name === hero.localized_name,
         );
         if (pickedIndex !== -1) {
-          this.removeCounterpickedHero(counterHero, pickedIndex);
+          this.removeCounterpickedHero(counterHero);
         }
       });
       hero.selected = false;

@@ -23,3 +23,25 @@ export const setVibrationData = async (newValue: boolean) => {
     console.log(e);
   }
 };
+
+export const getHeroesData = async () => {
+  try {
+    const value = await AsyncStorage.getItem('Heroes');
+    if (value !== null) {
+      return JSON.parse(value);
+    } else {
+      return null;
+    }
+  } catch (e) {
+    console.log(e);
+    return null;
+  }
+};
+
+export const setHeroesData = async (newValue: boolean) => {
+  try {
+    await AsyncStorage.setItem('Heroes', JSON.stringify(newValue));
+  } catch (e) {
+    console.log(e);
+  }
+};

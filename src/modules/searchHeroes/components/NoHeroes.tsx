@@ -1,7 +1,8 @@
 import React from 'react';
 import { Text, StyleSheet } from 'react-native';
 import Animated, { FadeIn } from 'react-native-reanimated';
-import { moderateScale, verticalScale } from 'react-native-size-matters';
+import { ms, vs } from 'react-native-size-matters';
+import colors from 'shared/colors';
 
 const NoHeroes = () => {
   return (
@@ -16,11 +17,11 @@ const styles = StyleSheet.create({
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    height: verticalScale(100),
+    height: vs(100),
   },
   title: {
-    color: 'white',
-    fontSize: moderateScale(14),
+    color: colors.white,
+    fontSize: ms(14),
   },
 });
 

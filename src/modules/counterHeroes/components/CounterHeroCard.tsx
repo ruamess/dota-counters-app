@@ -1,66 +1,42 @@
-import HeroImage from 'components/HeroImage';
 import { observer } from 'mobx-react-lite';
 import React from 'react';
-import { View, Text, StyleSheet, Image } from 'react-native';
-import { moderateScale, scale, verticalScale } from 'react-native-size-matters';
-import { ICounterHero } from 'shared/utils/interfaces';
+import { ms, vs } from 'react-native-size-matters';
+import { View, StyleSheet } from 'react-native';
+import colors from 'shared/colors';
+import { ICounterHeroCard } from 'shared/utils/interfaces';
+import CounterHeroInfo from './CounterHeroInfo';
+import VSEnemyWinRates from './VSEnemyWinRates';
 
-const CounterHeroCard: React.FC<ICounterHero> = observer(
-  ({ id, name, localized_name, image, overallWinrate, counterpicked }) => {
+const CounterHeroCard: React.FC<ICounterHeroCard> = observer(
+  ({ localized_name, image, overallWinRate, counterpicked }) => {
     return (
       <View style={styles.counterHeroCard}>
-        <View
-          style={{
-            flexDirection: 'row',
-            alignItems: 'center',
-            gap: 10,
-          }}
-        >
-          <HeroImage source={{ uri: image }} />
-
-          <View>
-            <Text style={{ color: 'white' }}>{localized_name}</Text>
-            <Text style={{ color: 'white' }}>Overall: {Math.round(overallWinrate)} %</Text>
-          </View>
-        </View>
-
-        <View style={styles.counterHeroWinRate}>
-          {counterpicked.map((el) => (
-            <View key={el.id} style={{ display: 'flex', flexDirection: 'row', gap: 2 }}>
-              <Image source={{ uri: el.image }} style={styles.image} />
-              <Text style={{ color: 'white' }}>: {Math.round(el.winrate)} %</Text>
-            </View>
-          ))}
-        </View>
+        <CounterHeroInfo
+          localized_name={localized_name}
+          overallWinRate={overallWinRate}
+          image={image}
+        />
+        <VSEnemyWinRates counterpicked={counterpicked} />
       </View>
     );
   },
 );
 
 const styles = StyleSheet.create({
-  image: {
-    width: scale(30),
-    height: verticalScale(18),
-    borderRadius: moderateScale(5),
-  },
   counterHeroCard: {
-    backgroundColor: '#28333D',
+    backgroundColor: colors.dark2,
     width: '100%',
-    height: verticalScale(90),
-    borderRadius: moderateScale(10),
-    padding: moderateScale(15),
+    height: vs(90),
+    borderRadius: ms(10),
+    padding: ms(15),
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginVertical: moderateScale(4),
+    marginVertical: ms(4),
   },
-  counterHeroWinRate: {
-    display: 'flex',
-    gap: moderateScale(8),
-    flexWrap: 'wrap',
-    justifyContent: 'center',
-    alignItems: 'center',
+  text: {
+    color: colors.white,
   },
 });
 

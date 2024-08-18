@@ -1,38 +1,21 @@
-import { Stack, SplashScreen } from 'expo-router';
+import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
-import React, { useEffect } from 'react';
+import React from 'react';
 import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
-import getHeroesData from 'shared/api/getHeroesData';
-import { SettingsStore } from 'shared/store/settings';
-import { getVibrationData } from 'shared/utils/asyncStorage';
 import * as NavigationBar from 'expo-navigation-bar';
+import { Platform } from 'react-native';
 
-NavigationBar.setBackgroundColorAsync('#ffffff00');
-SplashScreen.preventAutoHideAsync();
+if (Platform.OS === 'android') NavigationBar.setBackgroundColorAsync('#ffffff00');
 
 const RootLayout = () => {
   const insets = useSafeAreaInsets();
 
-  useEffect(() => {
-    const initialVibration = async () => {
-      SettingsStore.setVibration(await getVibrationData());
-    };
-
-    const fetchHeroes = async () => {
-      await getHeroesData();
-      SplashScreen.hideAsync();
-    };
-
-    initialVibration();
-    fetchHeroes();
-  }, []);
-
   return (
     <SafeAreaProvider>
-      <StatusBar style="light" backgroundColor="red" />
+      <StatusBar style="light" />
       <Stack
         screenOptions={{
-          presentation: 'transparentModal',
+          animation: 'fade',
           headerShown: false,
           headerShadowVisible: false,
           headerTintColor: '#fff',
@@ -41,20 +24,25 @@ const RootLayout = () => {
             backgroundColor: '#1C242D',
           },
           contentStyle: {
-            // paddingTop: ms(60),
             paddingTop: insets.top,
+            paddingBottom: insets.bottom,
+
             backgroundColor: '#1C242D',
           },
         }}
       >
         <Stack.Screen name="index" />
+        <Stack.Screen name="home" />
         <Stack.Screen
           name="settings"
           options={{
+            title: 'Settings',
+            presentation: Platform.OS === 'ios' ? 'modal' : 'card', // Добавлено условие для iOS
             headerShown: true,
+            headerBackTitleVisible: true, // Показываем кнопку назад
+            headerBackTitle: 'Back', // Текст кнопки назад (можно изменить при необходимости)
           }}
         />
-        <Stack.Screen name="splash" />
       </Stack>
     </SafeAreaProvider>
   );

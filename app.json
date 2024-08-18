@@ -2,7 +2,7 @@
   "expo": {
     "name": "Dota Counters",
     "slug": "dota-counters",
-    "version": "1.0.2",
+    "version": "1.0.3",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "dark",
@@ -20,7 +20,7 @@
         "foregroundImage": "./assets/icon.png",
         "backgroundColor": "#1C242D"
       },
-      "package": "com.evilwhy.dotacounters"
+      "package": "com.ruamess.dotacounters"
     },
     "web": {
       "favicon": "./assets/favicon.png"
