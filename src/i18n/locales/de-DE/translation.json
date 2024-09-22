@@ -1,0 +1,19 @@
+{
+  "AllHeroes": "Alle helden",
+  "ClearAll": "Alle löschen",
+  "CounterHeroes": "Gegenhelden",
+  "EnemyHeroes": "Feindliche helden",
+  "Language": "Sprache",
+  "Search": "Suche",
+  "SelectedHeroes": "Ausgewählte helden",
+  "Settings": "Einstellungen",
+  "Theme": "Thema",
+  "Vibration": "Vibration",
+  "Overall": "Insgesamt",
+  "DidntFindAHero": "Sie konnten keinen Helden finden?",
+  "NoHeroes": "Keine helden",
+  "NoInternetConnection": "Keine Internetverbindung",
+  "CheckYourConnection": "Bitte überprüfen Sie Ihre Verbindung. Die App benötigt Internet, um richtig zu funktionieren.",
+  "OpenDotaIsNotResponding": "OpenDota-Server antwortet nicht",
+  "SinceOpenDotaUnavaible": "Da der OpenDota-Server vorübergehend nicht verfügbar ist, werden wir eine archivierte Liste der Helden hochladen. Sie enthält möglicherweise keine neuen Helden."
+}

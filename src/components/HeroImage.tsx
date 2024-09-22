@@ -1,9 +1,9 @@
-import React, { memo } from 'react';
+import React, { FC, memo } from 'react';
 import { Image, StyleSheet } from 'react-native';
 import { ms, s, vs } from 'react-native-size-matters';
-import { IHeroImage } from 'shared/utils/interfaces';
+import { IHeroImage } from 'shared/interfaces';
 
-const HeroImage: React.FC<IHeroImage> = ({ size, url }) => {
+const HeroImage: FC<IHeroImage> = ({ size, url }) => {
   return (
     <Image
       style={[size === 'lg' && styles.lg, size === 'md' && styles.md, size === 'sm' && styles.sm]}

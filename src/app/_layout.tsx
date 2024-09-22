@@ -1,50 +1,63 @@
+import React, { useEffect } from 'react';
+import { Platform, StatusBar } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { Stack } from 'expo-router';
-import { StatusBar } from 'expo-status-bar';
-import React from 'react';
 import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
 import * as NavigationBar from 'expo-navigation-bar';
-import { Platform } from 'react-native';
-
-if (Platform.OS === 'android') NavigationBar.setBackgroundColorAsync('#ffffff00');
+import useThemeColors from 'hooks/useThemeColors';
+import BackArrow from 'components/BackArrow';
+import CustomAlert from 'components/CustomAlert';
+import 'i18n';
 
 const RootLayout = () => {
+  const { t } = useTranslation();
+  const colors = useThemeColors();
   const insets = useSafeAreaInsets();
 
-  return (
-    <SafeAreaProvider>
-      <StatusBar style="light" />
-      <Stack
-        screenOptions={{
-          animation: 'fade',
-          headerShown: false,
-          headerShadowVisible: false,
-          headerTintColor: '#fff',
-          headerTitleAlign: 'center',
-          headerStyle: {
-            backgroundColor: '#1C242D',
-          },
-          contentStyle: {
-            paddingTop: insets.top,
-            paddingBottom: insets.bottom,
+  useEffect(() => {
+    NavigationBar.setBackgroundColorAsync(colors.appBackground);
+    StatusBar.setBarStyle(colors.appBackground === '#FFFFFF' ? 'dark-content' : 'light-content');
+  }, [colors]);
 
-            backgroundColor: '#1C242D',
-          },
-        }}
-      >
-        <Stack.Screen name="index" />
-        <Stack.Screen name="home" />
-        <Stack.Screen
-          name="settings"
-          options={{
-            title: 'Settings',
-            presentation: Platform.OS === 'ios' ? 'modal' : 'card', // Добавлено условие для iOS
-            headerShown: true,
-            headerBackTitleVisible: true, // Показываем кнопку назад
-            headerBackTitle: 'Back', // Текст кнопки назад (можно изменить при необходимости)
+  return (
+    <>
+      <CustomAlert />
+      <SafeAreaProvider style={{ backgroundColor: colors.appBackground }}>
+        <Stack
+          screenOptions={{
+            animation: 'fade',
+            headerShown: false,
+            headerShadowVisible: false,
+            headerTintColor: '#fff',
+            headerTitleAlign: 'center',
+            headerStyle: {
+              backgroundColor: colors.appBackground,
+            },
+            contentStyle: {
+              paddingTop: insets.top,
+              paddingBottom: insets.bottom,
+              backgroundColor: colors.appBackground,
+            },
           }}
-        />
-      </Stack>
-    </SafeAreaProvider>
+        >
+          <Stack.Screen name="index" />
+          <Stack.Screen name="home" />
+          <Stack.Screen
+            name="settings"
+            options={{
+              title: t('Settings'),
+              headerTintColor: colors.text,
+              presentation: Platform.OS === 'ios' ? 'modal' : 'card',
+              headerShown: true,
+              headerBackTitleVisible: true,
+              headerBackTitle: 'Back',
+              headerLeft: () => <BackArrow />,
+            }}
+          />
+          <Stack.Screen name="search" />
+        </Stack>
+      </SafeAreaProvider>
+    </>
   );
 };
 

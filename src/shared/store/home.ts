@@ -1,13 +1,31 @@
 import { makeAutoObservable, action } from 'mobx';
-import { IHero, ICounterHero, ICounterpickedHero } from 'shared/utils/interfaces';
+import { IHero, ICounterHero, ICounterpickedHero } from 'shared/interfaces';
 
 class MainStore {
   heroes: Map<string, IHero> = new Map();
   counterHeroes: Map<string, ICounterHero> = new Map();
   searchQuery: string = '';
+  alert = {
+    isVisible: false,
+    title: '',
+    message: '',
+  };
+
   constructor() {
     makeAutoObservable(this);
   }
+
+  showAlert = (title: string, message: string) => {
+    this.alert.title = title;
+    this.alert.message = message;
+    this.alert.isVisible = true;
+  };
+
+  hideAlert = () => {
+    this.alert.title = '';
+    this.alert.message = '';
+    this.alert.isVisible = false;
+  };
 
   setSearchQuery = (newValue: string) => {
     this.searchQuery = newValue;
@@ -74,6 +92,12 @@ class MainStore {
 
   get selectedHeroes(): IHero[] {
     return Array.from(this.heroes.values()).filter((hero) => hero.selected);
+  }
+
+  get searchFilteredHeroes(): IHero[] {
+    return this.unselectedHeroes.filter((hero) =>
+      hero.localized_name.toLowerCase().includes(this.searchQuery.toLowerCase()),
+    );
   }
 
   get unselectedHeroes(): IHero[] {

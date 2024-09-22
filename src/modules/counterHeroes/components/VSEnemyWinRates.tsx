@@ -1,10 +1,10 @@
-import React from 'react';
+import React, { FC } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { ms } from 'react-native-size-matters';
+import { IVSEnemyWinRates, ICounterpickedHero } from 'shared/interfaces';
 import VSEnemyWinRateCard from './VSEnemyWinRateCard';
-import { IVSEnemyWinRates, ICounterpickedHero } from 'shared/utils/interfaces';
 
-const VSEnemyWinRates: React.FC<IVSEnemyWinRates> = ({ counterpicked }) => {
+const VSEnemyWinRates: FC<IVSEnemyWinRates> = ({ counterpicked }) => {
   return (
     <View style={styles.container}>
       {counterpicked.map((el: ICounterpickedHero) => (

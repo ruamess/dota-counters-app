@@ -1,0 +1,19 @@
+{
+  "AllHeroes": "Все герои",
+  "ClearAll": "Очистить",
+  "CounterHeroes": "Контр пики",
+  "EnemyHeroes": "Вражеский пик",
+  "Language": "Язык",
+  "Search": "Поиск",
+  "SelectedHeroes": "Выбранные герои",
+  "Settings": "Настройки",
+  "Theme": "Тема",
+  "Vibration": "Вибрация",
+  "Overall": "Общий",
+  "DidntFindAHero": "Не нашли героя?",
+  "NoHeroes": "Героев нет",
+  "NoInternetConnection": "Нет подключения к интернету",
+  "CheckYourConnection": "Пожалуйста, проверьте подключение к интернету. Для корректной работы приложению требуется интернет.",
+  "OpenDotaIsNotResponding": "Сервер OpenDota не отвечает",
+  "SinceOpenDotaUnavaible": "Поскольку сервер OpenDota временно недоступен, мы загрузим вам архивный список героев. В нем могут отсутствовать новые герои."
+}

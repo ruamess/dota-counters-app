@@ -1,33 +1,9 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-export const getVibrationData = async () => {
+export const getAsyncStorageItem = async (item: string) => {
   try {
-    const value = await AsyncStorage.getItem('Vibration');
-    if (value !== null) {
-      return JSON.parse(value);
-    } else {
-      await AsyncStorage.setItem('Vibration', JSON.stringify(true));
-      return true;
-    }
-  } catch (e) {
-    console.log(e);
-    return true;
-  }
-};
-
-export const setVibrationData = async (newValue: boolean) => {
-  try {
-    // console.log(newValue);
-    await AsyncStorage.setItem('Vibration', JSON.stringify(newValue));
-  } catch (e) {
-    console.log(e);
-  }
-};
-
-export const getHeroesData = async () => {
-  try {
-    const value = await AsyncStorage.getItem('Heroes');
-    if (value !== null) {
+    const value = await AsyncStorage.getItem(item);
+    if (value != null) {
       return JSON.parse(value);
     } else {
       return null;
@@ -38,9 +14,9 @@ export const getHeroesData = async () => {
   }
 };
 
-export const setHeroesData = async (newValue: boolean) => {
+export const setAsyncStorageItem = async (item: string, value: string) => {
   try {
-    await AsyncStorage.setItem('Heroes', JSON.stringify(newValue));
+    await AsyncStorage.setItem(item, JSON.stringify(value));
   } catch (e) {
     console.log(e);
   }

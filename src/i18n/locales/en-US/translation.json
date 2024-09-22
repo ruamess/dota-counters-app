@@ -1,0 +1,19 @@
+{
+  "AllHeroes": "All heroes",
+  "ClearAll": "Clear all",
+  "CounterHeroes": "Counter heroes",
+  "EnemyHeroes": "Enemy heroes",
+  "Language": "Language",
+  "Search": "Search",
+  "SelectedHeroes": "Selected heroes",
+  "Settings": "Settings",
+  "Theme": "Theme",
+  "Vibration": "Vibration",
+  "Overall": "Overall",
+  "DidntFindAHero": "Didn't find a hero?",
+  "NoHeroes": "No heroes",
+  "NoInternetConnection": "No internet connection",
+  "CheckYourConnection": "Please check your connection. The app requires internet to function properly.",
+  "OpenDotaIsNotResponding": "OpenDota server is not responding",
+  "SinceOpenDotaUnavaible": "Since OpenDota is temporarily unavailable, we will upload an archived list of heroes. It may not contain new heroes."
+}

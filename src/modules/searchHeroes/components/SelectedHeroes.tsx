@@ -1,16 +1,21 @@
-import React, { FC } from 'react';
+import React, { FC, memo, useMemo } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import Animated, { FadeIn, FadeOut } from 'react-native-reanimated';
-import { ISelectedHeroes } from 'shared/utils/interfaces';
+import { IColors, ISelectedHeroes } from 'shared/interfaces';
 import ClearHeroes from './ClearHeroes';
 import SearchHeroCard from './SearchHeroCard';
-import colors from 'shared/colors';
+import useThemeColors from 'hooks/useThemeColors';
 
 const SelectedHeroes: FC<ISelectedHeroes> = ({ selectedHeroes }) => {
+  const { t } = useTranslation();
+  const colors = useThemeColors();
+  const styles = useMemo(() => createStyles(colors), [colors]);
+
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.title}>Selected heroes</Text>
+        <Text style={styles.title}>{t('SelectedHeroes')}</Text>
         <ClearHeroes />
       </View>
 
@@ -26,20 +31,21 @@ const SelectedHeroes: FC<ISelectedHeroes> = ({ selectedHeroes }) => {
         </Animated.View>
       ))}
 
-      <Text style={styles.title}>All heroes</Text>
+      <Text style={styles.title}>{t('AllHeroes')}</Text>
     </View>
   );
 };
 
-const styles = StyleSheet.create({
-  container: {},
-  header: {
-    justifyContent: 'space-between',
-    flexDirection: 'row',
-  },
-  title: {
-    color: colors.white,
-  },
-});
+const createStyles = (colors: IColors) =>
+  StyleSheet.create({
+    container: {},
+    header: {
+      justifyContent: 'space-between',
+      flexDirection: 'row',
+    },
+    title: {
+      color: colors.text,
+    },
+  });
 
-export default SelectedHeroes;
+export default memo(SelectedHeroes);

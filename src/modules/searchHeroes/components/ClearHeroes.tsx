@@ -1,11 +1,16 @@
-import { observer } from 'mobx-react-lite';
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Text, StyleSheet, TouchableOpacity } from 'react-native';
-import colors from 'shared/colors';
+import { useTranslation } from 'react-i18next';
 import { HomeStore } from 'shared/store/home';
 import { Vibrate } from 'shared/utils/vibration';
+import useThemeColors from 'hooks/useThemeColors';
+import { IColors } from 'shared/interfaces';
 
-const ClearHeroes = observer(() => {
+const ClearHeroes = () => {
+  const { t } = useTranslation();
+  const colors = useThemeColors();
+  const styles = useMemo(() => createStyles(colors), [colors]);
+
   return (
     <TouchableOpacity
       onPress={() => {
@@ -13,15 +18,16 @@ const ClearHeroes = observer(() => {
         Vibrate();
       }}
     >
-      <Text style={styles.title}>Clear all</Text>
+      <Text style={styles.title}>{t('ClearAll')}</Text>
     </TouchableOpacity>
   );
-});
+};
 
-const styles = StyleSheet.create({
-  title: {
-    color: colors.red,
-  },
-});
+const createStyles = (colors: IColors) =>
+  StyleSheet.create({
+    title: {
+      color: colors.red,
+    },
+  });
 
 export default ClearHeroes;

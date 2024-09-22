@@ -1,17 +1,18 @@
 import * as Haptics from 'expo-haptics';
 import { Platform, Vibration } from 'react-native';
-import { SettingsStore } from 'shared/store/settings';
+import { useSettingsStore } from 'shared/store/settings';
+import { MutableRefObject } from 'react';
 
 export const scrollVibration = (
-  lastVibrationOffset: any,
-  scrollOffsetY: any,
-  currentOffsetY: any,
+  lastVibrationOffset: MutableRefObject<number>,
+  scrollOffsetY: MutableRefObject<number>,
+  currentOffsetY: number,
   CARD_HEIGHT: number,
 ) => {
   const offsetDifference = Math.abs(currentOffsetY - lastVibrationOffset.current);
 
   if (offsetDifference >= CARD_HEIGHT) {
-    if (SettingsStore.vibration === true) {
+    if (useSettingsStore.getState().vibration === true) {
       Vibrate();
     }
 
@@ -22,11 +23,11 @@ export const scrollVibration = (
 };
 
 export const Vibrate = async () => {
-  if (SettingsStore.vibration === true) {
+  if (useSettingsStore.getState().vibration === true) {
     if (Platform.OS === 'android') {
       Vibration.vibrate(1);
     } else {
-      Haptics.selectionAsync();
+      await Haptics.selectionAsync();
     }
   }
 };

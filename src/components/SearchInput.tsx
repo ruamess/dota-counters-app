@@ -1,61 +1,74 @@
-import Ionicons from '@expo/vector-icons/Ionicons';
-import React, { memo } from 'react';
-import { View, StyleSheet, TextInput } from 'react-native';
+import React, { useCallback, useMemo, memo, FC } from 'react';
+import { View, StyleSheet, TextInput, TextInputProps } from 'react-native';
 import { ms, s, vs } from 'react-native-size-matters';
-import colors from 'shared/colors';
+import { useTranslation } from 'react-i18next';
+import Ionicons from '@expo/vector-icons/Ionicons';
+import useThemeColors from 'hooks/useThemeColors';
+import { IColors } from 'shared/interfaces';
+import { HomeStore } from 'shared/store/home';
+import { observer } from 'mobx-react-lite';
 
-const SearchInput = ({ ...children }) => {
-  console.log('search rendered');
+const SearchInput: FC<TextInputProps> = observer(({ ...children }) => {
+  const { t } = useTranslation();
+  const colors = useThemeColors();
+  const styles = useMemo(() => createStyles(colors), [colors]);
+
+  const handleChangeText = useCallback((text: string) => {
+    HomeStore.setSearchQuery(text);
+  }, []);
+
   return (
     <View style={styles.inputContainer}>
       <View style={styles.search}>
+        <View style={styles.icon}>
+          <Ionicons name="search" size={vs(20)} color={colors.text} />
+        </View>
         <TextInput
           style={styles.input}
-          placeholder="Search..."
-          placeholderTextColor={colors.white}
+          placeholder={`${t('Search')}...`}
+          placeholderTextColor={colors.text}
+          value={HomeStore.searchQuery}
+          onChangeText={handleChangeText}
           {...children}
         />
-        <View style={styles.icon}>
-          <Ionicons name="search" size={vs(20)} color={colors.white} />
-        </View>
       </View>
     </View>
   );
-};
-
-const styles = StyleSheet.create({
-  inputContainer: {
-    width: '100%',
-    alignItems: 'center',
-    justifyContent: 'center',
-    height: vs(50),
-    zIndex: 3,
-  },
-  input: {
-    height: vs(40),
-    fontSize: ms(16),
-    flex: 1,
-    color: colors.white,
-  },
-  search: {
-    width: '100%',
-    maxWidth: s(400),
-    backgroundColor: colors.dark2,
-    height: vs(40),
-    borderRadius: ms(10),
-    paddingHorizontal: ms(15),
-    display: 'flex',
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    zIndex: 20,
-  },
-  icon: {
-    height: '100%',
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
 });
+
+const createStyles = (colors: IColors) =>
+  StyleSheet.create({
+    inputContainer: {
+      flex: 1,
+      alignItems: 'center',
+      justifyContent: 'center',
+      height: vs(48),
+    },
+    input: {
+      flex: 1,
+      marginLeft: 10,
+      height: vs(40),
+      fontSize: ms(16),
+      color: colors.text,
+    },
+    search: {
+      width: '100%',
+      maxWidth: s(400),
+      backgroundColor: colors.elementBackground,
+      height: vs(40),
+      borderRadius: ms(10),
+      paddingHorizontal: ms(10),
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'flex-start',
+      zIndex: 20,
+    },
+    icon: {
+      width: vs(30),
+      height: '100%',
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+  });
 
 export default memo(SearchInput);

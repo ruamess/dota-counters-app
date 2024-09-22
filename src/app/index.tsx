@@ -1,39 +1,19 @@
 import React, { useEffect } from 'react';
 import { View, StyleSheet, ActivityIndicator } from 'react-native';
-import fetchHeroesData from 'shared/api/fetchHeroesData';
-import { SettingsStore } from 'shared/store/settings';
-import { getVibrationData, getHeroesData } from 'shared/utils/asyncStorage';
-import { router } from 'expo-router';
-import { HomeStore } from 'shared/store/home';
+import useThemeColors from 'hooks/useThemeColors';
+import { initHeroesData, initTheme, initVibration } from 'shared/utils/initAsyncItems';
 
 const Splash = () => {
+  const colors = useThemeColors();
   useEffect(() => {
-    const initialVibration = async () => {
-      SettingsStore.setVibration(await getVibrationData());
-    };
-    const initialHeroes = async () => {
-      const heroes = await getHeroesData();
-      console.log(heroes);
-      if (heroes == null) fetchHeroes();
-      else {
-        HomeStore.setHeroes(heroes);
-        router.replace('/home');
-      }
-    };
-
-    const fetchHeroes = async () => {
-      await fetchHeroesData();
-      router.replace('/home');
-      console.log('не асинк');
-    };
-
-    initialVibration();
-    initialHeroes();
+    initTheme();
+    initVibration();
+    initHeroesData();
   }, []);
 
   return (
     <View style={styles.container}>
-      <ActivityIndicator size="large" color="white" />
+      <ActivityIndicator size="large" color={colors.text} />
     </View>
   );
 };

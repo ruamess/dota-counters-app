@@ -1,11 +1,13 @@
-import React, { FC } from 'react';
-import HeroImage from 'components/HeroImage';
+import React, { FC, useMemo } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { ms, vs } from 'react-native-size-matters';
-import colors from 'shared/colors';
-import { IHero } from 'shared/utils/interfaces';
+import { IColors, IHero } from 'shared/interfaces';
+import HeroImage from 'components/HeroImage';
+import useThemeColors from 'hooks/useThemeColors';
 
 const EnemyHeroCard: FC<IHero> = ({ image, localized_name }) => {
+  const colors = useThemeColors();
+  const styles = useMemo(() => createStyles(colors), [colors]);
   return (
     <View style={styles.enemyHeroCard}>
       <HeroImage url={image} size="lg" />
@@ -14,17 +16,17 @@ const EnemyHeroCard: FC<IHero> = ({ image, localized_name }) => {
   );
 };
 
-const styles = StyleSheet.create({
-  enemyHeroCard: {
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  heroName: {
-    fontSize: ms(15),
-    color: colors.white,
-    marginTop: vs(3),
-  },
-});
+const createStyles = (colors: IColors) =>
+  StyleSheet.create({
+    enemyHeroCard: {
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    heroName: {
+      fontSize: ms(15),
+      color: colors.text,
+      marginTop: vs(3),
+    },
+  });
 
 export default EnemyHeroCard;

@@ -1,51 +1,57 @@
-import CustomSwitch from 'components/CustomSwitch';
-import { observer } from 'mobx-react-lite';
-import React from 'react';
+import React, { useMemo, memo } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import { moderateScale } from 'react-native-size-matters';
-import colors from 'shared/colors';
-import { SettingsStore } from 'shared/store/settings';
-import { Vibrate } from 'shared/utils/vibration';
+import { useTranslation } from 'react-i18next';
+import { ms, vs } from 'react-native-size-matters';
+import { ThemePicker } from 'modules/themePicker';
+import useThemeColors from 'hooks/useThemeColors';
+import { IColors } from 'shared/interfaces';
+import { LanguagePicker } from 'modules/languagePicker';
+import RefetchButton from 'components/RefetchButton';
+import SettingItem from 'components/SettingItem';
+import VibrationSwitch from 'components/VibrationSwitch';
 
-const Settings = observer(() => {
+const Settings = () => {
+  const { t } = useTranslation();
+  const colors = useThemeColors();
+  const styles = useMemo(() => createStyles(colors), [colors]);
+
   return (
     <View style={styles.container}>
       <View style={styles.settings}>
+        <SettingItem title={t('Vibration')} component={<VibrationSwitch />} />
+        <SettingItem title={t('Theme')} component={<ThemePicker />} />
+        <SettingItem title={t('Language')} component={<LanguagePicker />} />
         <View style={styles.setting}>
-          <Text style={styles.title}>Vibration</Text>
-          <CustomSwitch
-            onValueChange={() => {
-              SettingsStore.setVibration(!SettingsStore.vibration);
-              Vibrate();
-            }}
-            value={SettingsStore.vibration}
-          />
+          <Text style={styles.title}>{t('DidntFindAHero')}</Text>
+          <RefetchButton />
         </View>
-        {/* <Text>i love dary</Text> */}
       </View>
     </View>
   );
-});
+};
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  setting: {
-    display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  settings: {
-    width: '80%',
-  },
-  title: {
-    color: colors.white,
-    fontSize: moderateScale(17),
-  },
-});
+const createStyles = (colors: IColors) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    setting: {
+      flexDirection: 'column',
+      gap: ms(20),
+      marginTop: vs(15),
+      justifyContent: 'space-between',
+      alignItems: 'center',
+    },
+    settings: {
+      width: '80%',
+      gap: ms(20),
+    },
+    title: {
+      color: colors.text,
+      fontSize: ms(17),
+    },
+  });
 
-export default Settings;
+export default memo(Settings);

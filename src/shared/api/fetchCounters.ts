@@ -1,33 +1,58 @@
 import axios from 'axios';
-import { load } from 'cheerio';
+import { parse } from 'node-html-parser';
 import { HomeStore } from 'shared/store/home';
-import { IHero, ICounterHero } from 'shared/utils/interfaces';
+import { IHero, ICounterHero } from 'shared/interfaces';
+
+function findCounterpickedHeroByLocalizedName(localized_name: string): ICounterHero | null {
+  // Проходим по каждому контр персонажу
+  for (const counterHero of HomeStore.counterHeroes.values()) {
+    // Ищем в списке контрпикнутых персонажей у каждого контр персонажа
+    const counterpickedHero = counterHero.counterpicked.find(
+      (pickedHero) => pickedHero.localized_name === localized_name,
+    );
+
+    if (counterpickedHero) {
+      return counterHero; // Возвращаем контр персонажа, у которого есть контрпикнутый герой
+    }
+  }
+
+  // Если не найдено, возвращаем null
+  return null;
+}
 
 // 1. Функция для получения данных с сайта
 async function fetchHeroCountersData(heroLocalizedName: string): Promise<string> {
-  const { data } = await axios.get(`https://www.dotabuff.com/heroes/${heroLocalizedName}/counters`);
-  return data;
+  try {
+    const { data } = await axios.get(
+      `https://www.dotabuff.com/heroes/${heroLocalizedName}/counters`,
+    );
+    return data;
+  } catch (error) {
+    console.error(`Error fetching data for ${heroLocalizedName}:`, error);
+    throw error;
+  }
 }
 
 // 2. Функция для парсинга данных
-function parseCounterHeroes(data: string): { name: string; winRate: number }[] {
-  const counterHeroesData: { name: string; winRate: number }[] = [];
-  const $ = load(data);
+function parseCounterHeroes(data: string): { localized_name: string; winRate: number }[] {
+  const counterHeroes: { localized_name: string; winRate: number }[] = [];
+  const root = parse(data);
 
-  $('table.sortable tbody tr')
-    .slice(0, 5)
-    .each((index, element) => {
-      const counterHeroName = $(element).find('td.cell-xlarge a').text().trim();
-      const counterHeroWinRate = parseFloat(
-        $(element).find('td:nth-child(4)').text().trim().replace('%', ''),
-      );
-      counterHeroesData.push({
-        name: counterHeroName,
-        winRate: counterHeroWinRate,
-      });
+  const rows = root.querySelectorAll('table.sortable tbody tr').slice(0, 5);
+
+  rows.forEach((row) => {
+    const counterHeroName = row.querySelector('td.cell-xlarge a')?.text.trim() || '';
+    const counterHeroWinRate = parseFloat(
+      row.querySelector('td:nth-child(4)')?.text.trim().replace('%', '') || '0',
+    );
+
+    counterHeroes.push({
+      localized_name: counterHeroName,
+      winRate: counterHeroWinRate,
     });
+  });
 
-  return counterHeroesData;
+  return counterHeroes;
 }
 
 // 3. Функция для нормализации имени
@@ -38,18 +63,19 @@ function normalizeLocalizedName(localized_name: string): string {
 // 4. Функция для работы с данными в HomeStore
 function updateHomeStoreWithCounters(
   hero: IHero,
-  counterHeroes: { name: string; winRate: number }[],
+  counterHeroes: { localized_name: string; winRate: number }[],
 ): void {
-  counterHeroes.forEach(({ name, winRate }) => {
-    const counterHeroData = HomeStore.findHeroByLocalizedName(name);
+  counterHeroes.forEach(({ localized_name, winRate }) => {
+    const counterHeroData = HomeStore.findHeroByLocalizedName(localized_name);
 
+    // Это
     if (!counterHeroData) {
-      console.log('Unexpected hero');
+      console.log(`Unexpected hero with localized name: ${localized_name}`);
       return;
     }
-
-    const existingHero = HomeStore.counterHeroes.get(name);
-
+    // Это
+    const existingHero = HomeStore.counterHeroes.get(localized_name);
+    // Это
     const counterpickedHeroData = {
       id: hero.id,
       name: hero.name,
@@ -59,6 +85,7 @@ function updateHomeStoreWithCounters(
       winRate,
     };
 
+    // Это
     if (existingHero) {
       const pickedIndex = existingHero.counterpicked.findIndex((picked) => picked.id === hero.id);
       if (pickedIndex !== -1) {
@@ -71,7 +98,7 @@ function updateHomeStoreWithCounters(
         id: counterHeroData.id,
         name: counterHeroData.name,
         image: counterHeroData.image,
-        localized_name: name,
+        localized_name: localized_name,
         selected: counterHeroData.selected,
         overallWinRate: winRate,
         counterpicked: [counterpickedHeroData],
@@ -84,12 +111,29 @@ function updateHomeStoreWithCounters(
 
 // 5. Главная функция для получения контрпиков
 export default async function fetchCounters(hero: IHero): Promise<void> {
-  if (HomeStore.selectedHeroes.length > 5) {
+  const existingHero = findCounterpickedHeroByLocalizedName(hero.localized_name);
+  console.log(hero.localized_name);
+  // Это
+  if (existingHero) {
+    const pickedIndex = existingHero.counterpicked.findIndex((picked) => picked.id === hero.id);
+    console.log(pickedIndex);
+    if (pickedIndex !== -1) {
+      HomeStore.removeCounterpickedHero(existingHero);
+    }
+  } else if (HomeStore.selectedHeroes.length == 5) {
+    console.log('Maximum number of selected heroes reached.');
     return;
   }
+
   const heroLocalizedName = normalizeLocalizedName(hero.localized_name);
-  const data = await fetchHeroCountersData(heroLocalizedName);
-  const counterHeroes = parseCounterHeroes(data);
-  updateHomeStoreWithCounters(hero, counterHeroes);
-  HomeStore.toggleHeroSelection(hero);
+
+  try {
+    const data = await fetchHeroCountersData(heroLocalizedName);
+    const counterHeroes = parseCounterHeroes(data);
+    updateHomeStoreWithCounters(hero, counterHeroes);
+    HomeStore.toggleHeroSelection(hero);
+    console.log(HomeStore.counterHeroes);
+  } catch (error) {
+    console.error('Error fetching or updating counters:', error);
+  }
 }

@@ -11,6 +11,8 @@ module.exports = function (api) {
           extensions: ['.ios.js', '.android.js', '.js', '.ts', '.tsx', '.json'],
           alias: {
             components: './src/components',
+            hooks: './src/hooks',
+            locales: './src/locales',
             modules: './src/modules',
             shared: './src/shared',
           },
