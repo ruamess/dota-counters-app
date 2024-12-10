@@ -31,3 +31,9 @@ export const Vibrate = async () => {
     }
   }
 };
+
+export const VibrateError = async () => {
+  if (useSettingsStore.getState().vibration === true) {
+    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+  }
+};

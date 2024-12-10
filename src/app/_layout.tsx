@@ -1,9 +1,8 @@
 import React, { useEffect } from 'react';
-import { Platform, StatusBar } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { Stack } from 'expo-router';
 import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
-import * as NavigationBar from 'expo-navigation-bar';
+import { StatusBar } from 'react-native';
 import useThemeColors from 'hooks/useThemeColors';
 import BackArrow from 'components/BackArrow';
 import CustomAlert from 'components/CustomAlert';
@@ -15,9 +14,8 @@ const RootLayout = () => {
   const insets = useSafeAreaInsets();
 
   useEffect(() => {
-    NavigationBar.setBackgroundColorAsync(colors.appBackground);
     StatusBar.setBarStyle(colors.appBackground === '#FFFFFF' ? 'dark-content' : 'light-content');
-  }, [colors]);
+  }, [colors.appBackground]);
 
   return (
     <>
@@ -25,6 +23,7 @@ const RootLayout = () => {
       <SafeAreaProvider style={{ backgroundColor: colors.appBackground }}>
         <Stack
           screenOptions={{
+            navigationBarColor: colors.appBackground,
             animation: 'fade',
             headerShown: false,
             headerShadowVisible: false,
@@ -47,10 +46,7 @@ const RootLayout = () => {
             options={{
               title: t('Settings'),
               headerTintColor: colors.text,
-              presentation: Platform.OS === 'ios' ? 'modal' : 'card',
               headerShown: true,
-              headerBackTitleVisible: true,
-              headerBackTitle: 'Back',
               headerLeft: () => <BackArrow />,
             }}
           />

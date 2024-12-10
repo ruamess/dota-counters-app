@@ -5,6 +5,7 @@ import { initHeroesData, initTheme, initVibration } from 'shared/utils/initAsync
 
 const Splash = () => {
   const colors = useThemeColors();
+
   useEffect(() => {
     initTheme();
     initVibration();

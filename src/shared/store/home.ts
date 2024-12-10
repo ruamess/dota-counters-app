@@ -1,4 +1,4 @@
-import { makeAutoObservable, action } from 'mobx';
+import { makeAutoObservable } from 'mobx';
 import { IHero, ICounterHero, ICounterpickedHero } from 'shared/interfaces';
 
 class MainStore {
@@ -15,55 +15,31 @@ class MainStore {
     makeAutoObservable(this);
   }
 
-  showAlert = (title: string, message: string) => {
-    this.alert.title = title;
-    this.alert.message = message;
-    this.alert.isVisible = true;
-  };
+  // --- Методы для управления Alert ---
+  showAlert(title: string, message: string) {
+    this.alert = { isVisible: true, title, message };
+  }
 
-  hideAlert = () => {
-    this.alert.title = '';
-    this.alert.message = '';
-    this.alert.isVisible = false;
-  };
+  hideAlert() {
+    this.alert = { isVisible: false, title: '', message: '' };
+  }
 
-  setSearchQuery = (newValue: string) => {
+  // --- Методы для поиска и фильтрации ---
+  setSearchQuery(newValue: string) {
     this.searchQuery = newValue;
-  };
-
-  pushHero = action((hero: ICounterHero) => {
-    this.counterHeroes.set(hero.localized_name, hero);
-  });
-
-  calculateAverageWinrate(counterpicked: ICounterpickedHero[]): number {
-    return counterpicked.reduce((sum, picked) => sum + picked.winRate, 0) / counterpicked.length;
   }
 
-  updateCounterHeroWinrate(hero: ICounterHero) {
-    hero.overallWinRate = this.calculateAverageWinrate(hero.counterpicked);
-  }
-
-  removeCounterpickedHero = action((existingHero: ICounterHero) => {
-    this.counterHeroes.delete(existingHero.localized_name);
-  });
-
-  addCounterpickedHero = action(
-    (existingHero: ICounterHero, counterpickedHero: ICounterpickedHero) => {
-      existingHero.counterpicked.push(counterpickedHero);
-      this.updateCounterHeroWinrate(existingHero);
-    },
-  );
-
-  setHeroes = action((heroes: IHero[]) => {
+  // --- Методы для работы с героями ---
+  setHeroes(heroes: IHero[]) {
     this.heroes.clear();
     heroes.forEach((hero) => this.heroes.set(hero.localized_name, hero));
-  });
+  }
 
   findHeroByLocalizedName(localized_name: string): IHero | undefined {
     return this.heroes.get(localized_name);
   }
 
-  toggleHeroSelection = action((hero: IHero) => {
+  toggleHeroSelection(hero: IHero) {
     const existingHero = this.findHeroByLocalizedName(hero.localized_name);
 
     if (existingHero) {
@@ -74,9 +50,9 @@ class MainStore {
     } else {
       console.log('Maximum number of selected heroes reached!');
     }
-  });
+  }
 
-  clearSelectedHeroes = action(() => {
+  clearSelectedHeroes() {
     this.selectedHeroes.forEach((hero) => {
       this.counterHeroes.forEach((counterHero) => {
         const pickedIndex = counterHero.counterpicked.findIndex(
@@ -88,15 +64,51 @@ class MainStore {
       });
       hero.selected = false;
     });
-  });
+  }
 
+  pushHero(hero: ICounterHero) {
+    this.counterHeroes.set(hero.localized_name, hero);
+  }
+
+  removeCounterpickedHero(existingHero: ICounterHero) {
+    this.counterHeroes.delete(existingHero.localized_name);
+
+    // Удаляем контрпики героя из других героев
+    this.counterHeroes.forEach((counterHero) => {
+      const index = counterHero.counterpicked.findIndex(
+        (picked) => picked.localized_name === existingHero.localized_name,
+      );
+      if (index !== -1) {
+        counterHero.counterpicked.splice(index, 1);
+        this.updateCounterHeroWinrate(counterHero);
+      }
+    });
+  }
+
+  calculateAverageWinrate(counterpicked: ICounterpickedHero[]): number {
+    return (
+      counterpicked.reduce((sum, picked) => sum + picked.winRate, 0) / (counterpicked.length || 1)
+    );
+  }
+
+  updateCounterHeroWinrate(hero: ICounterHero) {
+    hero.overallWinRate = this.calculateAverageWinrate(hero.counterpicked);
+  }
+
+  addCounterpickedHero(existingHero: ICounterHero, counterpickedHero: ICounterpickedHero) {
+    existingHero.counterpicked.push(counterpickedHero);
+    this.updateCounterHeroWinrate(existingHero);
+  }
+
+  // --- Вычисляемые свойства ---
   get selectedHeroes(): IHero[] {
     return Array.from(this.heroes.values()).filter((hero) => hero.selected);
   }
 
   get searchFilteredHeroes(): IHero[] {
+    const query = this.searchQuery.toLowerCase();
     return this.unselectedHeroes.filter((hero) =>
-      hero.localized_name.toLowerCase().includes(this.searchQuery.toLowerCase()),
+      hero.localized_name.toLowerCase().includes(query),
     );
   }
 
@@ -110,6 +122,19 @@ class MainStore {
       (counterHero) => !selectedHeroNames.has(counterHero.localized_name),
     );
   }
+
+  // --- Вспомогательная функция для поиска контрпиков ---
+  findCounterpickedHeroByLocalizedName(localized_name: string): ICounterHero | null {
+    for (const counterHero of this.counterHeroes.values()) {
+      if (
+        counterHero.counterpicked.some((pickedHero) => pickedHero.localized_name === localized_name)
+      ) {
+        return counterHero;
+      }
+    }
+    return null;
+  }
 }
 
+// Экземпляр MainStore
 export const HomeStore = new MainStore();

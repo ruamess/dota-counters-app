@@ -38,7 +38,6 @@ const createStyles = (colors: IColors) =>
       alignItems: 'center',
     },
     setting: {
-      flexDirection: 'column',
       gap: ms(20),
       marginTop: vs(15),
       justifyContent: 'space-between',

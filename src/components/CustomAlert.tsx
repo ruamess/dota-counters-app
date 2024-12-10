@@ -7,8 +7,7 @@ import { observer } from 'mobx-react-lite';
 import NetInfo from '@react-native-community/netinfo';
 import { useTranslation } from 'react-i18next';
 import { IColors } from 'shared/interfaces';
-import { Vibrate } from 'shared/utils/vibration';
-import * as Haptics from 'expo-haptics';
+import { Vibrate, VibrateError } from 'shared/utils/vibration';
 
 const CustomAlert = observer(() => {
   const { t } = useTranslation();
@@ -16,7 +15,7 @@ const CustomAlert = observer(() => {
   const styles = useMemo(() => createStyles(colors), [colors]);
 
   if (HomeStore.alert.isVisible) {
-    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+    VibrateError();
   }
 
   useEffect(() => {

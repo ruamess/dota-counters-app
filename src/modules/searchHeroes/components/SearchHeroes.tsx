@@ -57,7 +57,6 @@ const SearchHeroes = observer(() => {
           keyExtractor={(item) => item.id.toString()}
           renderItem={({ item }) => (
             <SearchHeroCard
-              key={item.id}
               id={item.id}
               name={item.name}
               selected={item.selected}

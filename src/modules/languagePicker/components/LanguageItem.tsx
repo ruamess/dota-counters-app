@@ -1,6 +1,6 @@
 import React, { FC, useEffect, useMemo, useState } from 'react';
 import { Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { ms, s, vs } from 'react-native-size-matters';
+import { ms, s } from 'react-native-size-matters';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { IColors, ILanguageItem } from 'shared/interfaces';
 import formatLanguage from '../utils/formatLanguage';
@@ -35,7 +35,7 @@ const createStyles = (colors: IColors, active: boolean) =>
       borderColor: colors.text,
       backgroundColor: active ? colors.text : colors.appBackground,
       width: s(30),
-      height: vs(28),
+      height: s(30),
       justifyContent: 'center',
       alignItems: 'center',
       borderRadius: ms(5),
