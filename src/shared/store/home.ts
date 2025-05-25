@@ -1,38 +1,36 @@
 import { makeAutoObservable } from 'mobx';
 import { IHero, ICounterHero, ICounterpickedHero } from 'shared/interfaces';
 
+/**
+ * Основное хранилище для героев и их контр-героев.
+ */
 class MainStore {
   heroes: Map<string, IHero> = new Map();
   counterHeroes: Map<string, ICounterHero> = new Map();
   searchQuery: string = '';
-  alert = {
-    isVisible: false,
-    title: '',
-    message: '',
-  };
 
   constructor() {
     makeAutoObservable(this);
   }
 
-  // --- Методы для управления Alert ---
-  showAlert(title: string, message: string) {
-    this.alert = { isVisible: true, title, message };
-  }
+  // =================================================================
+  // =======================  Методы поиска  ==========================
+  // =================================================================
 
-  hideAlert() {
-    this.alert = { isVisible: false, title: '', message: '' };
-  }
-
-  // --- Методы для поиска и фильтрации ---
   setSearchQuery(newValue: string) {
     this.searchQuery = newValue;
   }
 
-  // --- Методы для работы с героями ---
+  // =================================================================
+  // ==================  Методы работы с обычными героями  ===========
+  // =================================================================
+
   setHeroes(heroes: IHero[]) {
     this.heroes.clear();
-    heroes.forEach((hero) => this.heroes.set(hero.localized_name, hero));
+    heroes.forEach((hero) => {
+      // Ключом используем localized_name
+      this.heroes.set(hero.localized_name, hero);
+    });
   }
 
   findHeroByLocalizedName(localized_name: string): IHero | undefined {
@@ -43,68 +41,89 @@ class MainStore {
     const existingHero = this.findHeroByLocalizedName(hero.localized_name);
 
     if (existingHero) {
+      // Снимаем выбор или устанавливаем, но не даём выбрать больше 5
       existingHero.selected = !existingHero.selected && this.selectedHeroes.length < 5;
     } else if (this.selectedHeroes.length < 5) {
       hero.selected = true;
       this.heroes.set(hero.localized_name, hero);
     } else {
-      console.log('Maximum number of selected heroes reached!');
+      console.warn('Maximum number of selected heroes reached!');
     }
   }
 
   clearSelectedHeroes() {
-    this.selectedHeroes.forEach((hero) => {
+    // Удаляем контрпики у тех контр-героев, которые ссылаются на каждого из выбранных
+    this.selectedHeroes.forEach((selectedHero) => {
       this.counterHeroes.forEach((counterHero) => {
         const pickedIndex = counterHero.counterpicked.findIndex(
-          (picked) => picked.localized_name === hero.localized_name,
+          (picked) => picked.localized_name === selectedHero.localized_name,
         );
         if (pickedIndex !== -1) {
           this.removeCounterpickedHero(counterHero);
         }
       });
-      hero.selected = false;
+      // Снимаем флаг "selected"
+      selectedHero.selected = false;
     });
   }
 
-  pushHero(hero: ICounterHero) {
-    this.counterHeroes.set(hero.localized_name, hero);
+  // =================================================================
+  // =============  Методы работы с контр-героями (ICounterHero)  ====
+  // =================================================================
+
+  pushHero(counterHero: ICounterHero) {
+    this.counterHeroes.set(counterHero.localized_name, counterHero);
   }
 
-  removeCounterpickedHero(existingHero: ICounterHero) {
-    this.counterHeroes.delete(existingHero.localized_name);
+  removeCounterpickedHero(counterHero: ICounterHero) {
+    // Удаляем самого контр-героя из counterHeroes
+    this.counterHeroes.delete(counterHero.localized_name);
 
-    // Удаляем контрпики героя из других героев
-    this.counterHeroes.forEach((counterHero) => {
-      const index = counterHero.counterpicked.findIndex(
-        (picked) => picked.localized_name === existingHero.localized_name,
+    // Также удаляем все упоминания о нём из других контр-героев
+    for (const otherHero of this.counterHeroes.values()) {
+      const idx = otherHero.counterpicked.findIndex(
+        (picked) => picked.localized_name === counterHero.localized_name,
       );
-      if (index !== -1) {
-        counterHero.counterpicked.splice(index, 1);
-        this.updateCounterHeroWinrate(counterHero);
+      if (idx !== -1) {
+        otherHero.counterpicked.splice(idx, 1);
+        this.updateCounterHeroWinrate(otherHero);
       }
-    });
+    }
   }
 
-  calculateAverageWinrate(counterpicked: ICounterpickedHero[]): number {
-    return (
-      counterpicked.reduce((sum, picked) => sum + picked.winRate, 0) / (counterpicked.length || 1)
-    );
+  addCounterpickedHero(existingHero: ICounterHero, newCounterpicked: ICounterpickedHero) {
+    existingHero.counterpicked.push(newCounterpicked);
+    this.updateCounterHeroWinrate(existingHero);
   }
 
   updateCounterHeroWinrate(hero: ICounterHero) {
     hero.overallWinRate = this.calculateAverageWinrate(hero.counterpicked);
   }
 
-  addCounterpickedHero(existingHero: ICounterHero, counterpickedHero: ICounterpickedHero) {
-    existingHero.counterpicked.push(counterpickedHero);
-    this.updateCounterHeroWinrate(existingHero);
+  // =================================================================
+  // ===============  Вспомогательные методы для винрейта  ===========
+  // =================================================================
+
+  calculateAverageWinrate(counterpicked: ICounterpickedHero[]): number {
+    if (counterpicked.length === 0) return 0;
+    const sum = counterpicked.reduce((acc, picked) => acc + picked.winRate, 0);
+    return sum / counterpicked.length;
   }
 
-  // --- Вычисляемые свойства ---
+  // =================================================================
+  // =======================  Вычисляемые свойства  ===================
+  // =================================================================
+
+  /**
+   * Возвращает всех героев, у которых selected = true.
+   */
   get selectedHeroes(): IHero[] {
     return Array.from(this.heroes.values()).filter((hero) => hero.selected);
   }
 
+  /**
+   * Возвращает героев, которые НЕ выбраны, но подходят под поисковый запрос.
+   */
   get searchFilteredHeroes(): IHero[] {
     const query = this.searchQuery.toLowerCase();
     return this.unselectedHeroes.filter((hero) =>
@@ -112,29 +131,23 @@ class MainStore {
     );
   }
 
+  /**
+   * Возвращает героев, которые не выбраны (selected = false).
+   */
   get unselectedHeroes(): IHero[] {
     return Array.from(this.heroes.values()).filter((hero) => !hero.selected);
   }
 
+  /**
+   * Возвращает контр-героев, чьё localized_name не совпадает с именами выбранных героев.
+   */
   get filteredCounterHeroes(): ICounterHero[] {
-    const selectedHeroNames = new Set(this.selectedHeroes.map((hero) => hero.localized_name));
+    const selectedNames = new Set(this.selectedHeroes.map((h) => h.localized_name));
     return Array.from(this.counterHeroes.values()).filter(
-      (counterHero) => !selectedHeroNames.has(counterHero.localized_name),
+      (cHero) => !selectedNames.has(cHero.localized_name),
     );
-  }
-
-  // --- Вспомогательная функция для поиска контрпиков ---
-  findCounterpickedHeroByLocalizedName(localized_name: string): ICounterHero | null {
-    for (const counterHero of this.counterHeroes.values()) {
-      if (
-        counterHero.counterpicked.some((pickedHero) => pickedHero.localized_name === localized_name)
-      ) {
-        return counterHero;
-      }
-    }
-    return null;
   }
 }
 
-// Экземпляр MainStore
+// Экспортируем экземпляр нашего хранилища
 export const HomeStore = new MainStore();

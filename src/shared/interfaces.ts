@@ -52,7 +52,6 @@ export interface IAsyncStore {
 export interface IThemePickerItem {
   onPress: () => void;
   selected: boolean;
-  backgroundColor: string;
   children: ReactNode;
 }
 
@@ -73,4 +72,9 @@ export interface ILanguageItem {
 export interface ISettingItem {
   title: string;
   component: ReactNode;
+}
+
+export interface ISettingWrapper {
+  style?: ViewStyle;
+  children: React.ReactNode;
 }

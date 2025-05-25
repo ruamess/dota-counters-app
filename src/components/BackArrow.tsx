@@ -1,9 +1,9 @@
-import React, { memo } from 'react';
-import { StyleSheet, TouchableOpacity } from 'react-native';
-import { ms, s, vs } from 'react-native-size-matters';
-import MaterialIcons from '@expo/vector-icons/MaterialIcons';
-import { router } from 'expo-router';
-import useThemeColors from 'hooks/useThemeColors';
+import React, { memo } from "react";
+import { StyleSheet, TouchableOpacity } from "react-native";
+import { ms, s, vs } from "react-native-size-matters";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import { router } from "expo-router";
+import useThemeColors from "hooks/useThemeColors";
 
 const BackArrow = () => {
   const colors = useThemeColors();
@@ -17,8 +17,8 @@ const BackArrow = () => {
 
 const styles = StyleSheet.create({
   container: {
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     height: vs(40),
     width: s(40),
   },

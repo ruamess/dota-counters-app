@@ -1,12 +1,14 @@
 import { create } from 'zustand';
 import { setAsyncStorageItem } from 'shared/utils/asyncStorage';
 
+type ThemeType = 'light' | 'dark' | 'black';
+
 interface SettingsState {
   vibration: boolean;
-  theme: 'light' | 'dark' | 'black';
+  theme: ThemeType;
   languages: string[];
   setVibration: (value: boolean) => Promise<void>;
-  setTheme: (theme: 'light' | 'dark' | 'black') => Promise<void>;
+  setTheme: (theme: ThemeType) => Promise<void>;
 }
 
 export const useSettingsStore = create<SettingsState>((set) => ({
@@ -19,7 +21,7 @@ export const useSettingsStore = create<SettingsState>((set) => ({
     setAsyncStorageItem('vibration', String(value));
   },
 
-  setTheme: async (theme: 'light' | 'dark' | 'black') => {
+  setTheme: async (theme) => {
     set({ theme });
     setAsyncStorageItem('theme', theme);
   },

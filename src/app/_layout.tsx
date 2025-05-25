@@ -1,11 +1,12 @@
-import React, { useEffect } from 'react';
+import React from 'react';
+import { View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { Stack } from 'expo-router';
 import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
-import { StatusBar } from 'react-native';
 import useThemeColors from 'hooks/useThemeColors';
 import BackArrow from 'components/BackArrow';
-import CustomAlert from 'components/CustomAlert';
+import { StatusBar } from 'expo-status-bar';
+import { ModalAlert } from 'modules/modalAlert';
 import 'i18n';
 
 const RootLayout = () => {
@@ -13,14 +14,11 @@ const RootLayout = () => {
   const colors = useThemeColors();
   const insets = useSafeAreaInsets();
 
-  useEffect(() => {
-    StatusBar.setBarStyle(colors.appBackground === '#FFFFFF' ? 'dark-content' : 'light-content');
-  }, [colors.appBackground]);
-
   return (
-    <>
-      <CustomAlert />
-      <SafeAreaProvider style={{ backgroundColor: colors.appBackground }}>
+    <View style={{ flex: 1, backgroundColor: colors.appBackground }}>
+      <ModalAlert />
+      <StatusBar style={colors.appBackground === '#FFFFFF' ? 'dark' : 'light'} />
+      <SafeAreaProvider>
         <Stack
           screenOptions={{
             navigationBarColor: colors.appBackground,
@@ -47,13 +45,21 @@ const RootLayout = () => {
               title: t('Settings'),
               headerTintColor: colors.text,
               headerShown: true,
+              headerStyle: {
+                backgroundColor: colors.elementBackground,
+              },
               headerLeft: () => <BackArrow />,
+              contentStyle: {
+                paddingTop: 0,
+                paddingBottom: insets.bottom,
+                backgroundColor: colors.appBackground,
+              },
             }}
           />
           <Stack.Screen name="search" />
         </Stack>
       </SafeAreaProvider>
-    </>
+    </View>
   );
 };
 

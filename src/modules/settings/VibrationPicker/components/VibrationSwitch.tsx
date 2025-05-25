@@ -12,10 +12,13 @@ const VibrationSwitch = () => {
   // console.log('vibration svitch rendered');
   return (
     <Switch
-      style={{ height: vs(30) }}
+      style={{
+        height: vs(30),
+        transform: [{ translateY: 5 }],
+      }}
       trackColor={{ false: colors.elementBackground, true: colors.green }}
       thumbColor={colors.text}
-      ios_backgroundColor="#3e3e3e"
+      ios_backgroundColor="transparent"
       onValueChange={() => {
         setVibration(!vibration);
         Vibrate();

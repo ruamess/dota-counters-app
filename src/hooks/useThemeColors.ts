@@ -4,7 +4,7 @@ const themes = {
   light: {
     text: '#333333',
     appBackground: '#FFFFFF',
-    elementBackground: '#F5F5F5',
+    elementBackground: '#F3F3F3',
     green: '#B5FE83',
     red: '#F44336',
     overlay: 'rgba(0, 0, 0, 0.6)',

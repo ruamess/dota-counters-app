@@ -18,41 +18,26 @@ const SearchInput: FC<TextInputProps> = observer(({ ...children }) => {
   }, []);
 
   return (
-    <View style={styles.inputContainer}>
-      <View style={styles.search}>
-        <View style={styles.icon}>
-          <Ionicons name="search" size={vs(20)} color={colors.text} />
-        </View>
-        <TextInput
-          style={styles.input}
-          placeholder={`${t('Search')}...`}
-          placeholderTextColor={colors.text}
-          value={HomeStore.searchQuery}
-          onChangeText={handleChangeText}
-          {...children}
-        />
+    <View style={styles.search}>
+      <View style={styles.icon}>
+        <Ionicons name="search" size={vs(20)} color={colors.text} />
       </View>
+      <TextInput
+        style={styles.input}
+        placeholder={`${t('Search')}...`}
+        placeholderTextColor={colors.text}
+        value={HomeStore.searchQuery}
+        onChangeText={handleChangeText}
+        {...children}
+      />
     </View>
   );
 });
 
 const createStyles = (colors: IColors) =>
   StyleSheet.create({
-    inputContainer: {
-      flex: 1,
-      alignItems: 'center',
-      justifyContent: 'center',
-      height: vs(48),
-    },
-    input: {
-      flex: 1,
-      marginLeft: 10,
-      height: vs(40),
-      fontSize: ms(16),
-      color: colors.text,
-    },
     search: {
-      width: '100%',
+      flex: 1,
       maxWidth: s(400),
       backgroundColor: colors.elementBackground,
       height: vs(40),
@@ -62,6 +47,13 @@ const createStyles = (colors: IColors) =>
       alignItems: 'center',
       justifyContent: 'flex-start',
       zIndex: 20,
+    },
+    input: {
+      flex: 1,
+      marginLeft: 10,
+      height: vs(40),
+      fontSize: ms(16),
+      color: colors.text,
     },
     icon: {
       width: vs(30),

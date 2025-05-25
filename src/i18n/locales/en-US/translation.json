@@ -14,6 +14,6 @@
   "NoHeroes": "No heroes",
   "NoInternetConnection": "No internet connection",
   "CheckYourConnection": "Please check your connection. The app requires internet to function properly.",
-  "OpenDotaIsNotResponding": "OpenDota server is not responding",
-  "SinceOpenDotaUnavaible": "Since OpenDota is temporarily unavailable, we will upload an archived list of heroes. It may not contain new heroes."
+  "OpenDotaIsNotResponding": "OpenDota server has no response",
+  "SinceOpenDotaUnavaible": "Since OpenDota is temporarily unavailable, we will upload an archived list of heroes. It may not contain new heroes!"
 }

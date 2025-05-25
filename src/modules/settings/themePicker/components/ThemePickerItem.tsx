@@ -1,22 +1,17 @@
 import React, { FC, useMemo } from 'react';
 import { StyleSheet, TouchableOpacity } from 'react-native';
-import { s, vs } from 'react-native-size-matters';
+import { s } from 'react-native-size-matters';
 import { IColors, IThemePickerItem } from 'shared/interfaces';
 import useThemeColors from 'hooks/useThemeColors';
 
-const ThemePickerItem: FC<IThemePickerItem> = ({
-  onPress,
-  selected,
-  backgroundColor,
-  children,
-}) => {
+const ThemePickerItem: FC<IThemePickerItem> = ({ onPress, selected, children }) => {
   const colors = useThemeColors();
   const styles = useMemo(() => createStyles(colors), [colors]);
 
   return (
     <TouchableOpacity
       onPress={onPress}
-      style={[styles.container, { backgroundColor }, selected ? styles.selected : null]}
+      style={[styles.container, selected ? styles.selected : null]}
     >
       {children}
     </TouchableOpacity>
@@ -26,15 +21,14 @@ const ThemePickerItem: FC<IThemePickerItem> = ({
 const createStyles = (colors: IColors) =>
   StyleSheet.create({
     container: {
-      width: s(40),
-      borderRadius: s(40),
+      width: s(100),
+      borderRadius: s(50),
       justifyContent: 'center',
       alignItems: 'center',
-      height: vs(25),
+      height: '100%',
     },
     selected: {
-      borderWidth: 1,
-      borderColor: colors.text,
+      backgroundColor: colors.elementBackground,
     },
   });
 

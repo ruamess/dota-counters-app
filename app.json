@@ -3,6 +3,7 @@
     "name": "Dota Counters",
     "slug": "dota-counters",
     "scheme": "dota-counters-scheme",
+    "newArchEnabled": true,
     "version": "1.0.3",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
